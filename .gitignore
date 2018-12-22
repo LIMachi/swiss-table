@@ -1,0 +1,10 @@
+.dep
+.obj
+*.o
+*.d
+.items
+~*
+._*
+.DS_Store
+*.a
+*.bin
