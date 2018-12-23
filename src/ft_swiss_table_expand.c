@@ -25,7 +25,7 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 	tmp = (t_swt_map){.pair_count = 0, .nb_groups = map->nb_groups * factor,
 		.hashfun = map->hashfun, .cmpfun = map->cmpfun,
 		.groups = malloc(sizeof(t_swt_group) * map->nb_groups * factor),
-		.values = malloc(sizeof(void*) * map->nb_groups * factor)};
+		.values = malloc(sizeof(SWT_VALUE_TYPE) * map->nb_groups * factor)};
 	if (tmp.groups == NULL || tmp.values == NULL)
 	{
 		free(tmp.groups);
@@ -38,11 +38,11 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 		g = map->groups[i];
 		match = _mm_movemask_epi8(g.control);
 		j = -1;
-		while (++j < 16)
+		while (++j < SWT_BASE_CONTROL_SIZE)
 			if (!(match & (1 << i)))
 				if (__builtin_expect(
 					ft_swiss_table_insert(&tmp, g.key[j],
-						map->values[i * 16 + j]), 0))
+						map->values[i * SWT_BASE_CONTROL_SIZE + j]), 0))
 					return (-1);
 	}
 	ft_swiss_table_destroy(map);
@@ -62,7 +62,7 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 	tmp = (t_swt_map){.pair_count = 0, .nb_groups = map->nb_groups * factor,
 		.hashfun = map->hashfun, .cmpfun = map->cmpfun,
 		.groups = malloc(sizeof(t_swt_group) * map->nb_groups * factor),
-		.values = malloc(sizeof(void*) * map->nb_groups * factor)};
+		.values = malloc(sizeof(SWT_VALUE_TYPE) * map->nb_groups * factor)};
 	if (tmp.groups == NULL || tmp.values == NULL)
 	{
 		free(tmp.groups);
@@ -74,11 +74,11 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 	{
 		g = map->groups[i];
 		j = -1;
-		while (++j < 16)
+		while (++j < SWT_BASE_CONTROL_SIZE)
 			if (!(g.control[j] & (1 << 7)))
 				if (__builtin_expect(
 					ft_swiss_table_insert(&tmp, g.key[j],
-						map->values[i * 16 + j]), 0))
+						map->values[i * SWT_BASE_CONTROL_SIZE + j]), 0))
 					return (-1);
 	}
 	ft_swiss_table_destroy(map);

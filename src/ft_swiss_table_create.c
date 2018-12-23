@@ -20,10 +20,10 @@ t_swt_map	ft_swiss_table_create(t_swt_hashfun hash,
 	t_swt_map	out;
 	size_t		i;
 
-	out = (t_swt_map){.pair_count = 0, .nb_groups = SWT_BASE_SIZE,
+	out = (t_swt_map){.pair_count = 0, .nb_groups = SWT_BASE_GROUP_SIZE,
 		.hashfun = hash, .cmpfun = cmp,
-		.groups = malloc(sizeof(t_swt_group) * SWT_BASE_SIZE),
-		.values = malloc(sizeof(void*) * SWT_BASE_SIZE)};
+		.groups = malloc(sizeof(t_swt_group) * SWT_BASE_GROUP_SIZE),
+		.values = malloc(sizeof(SWT_VALUE_TYPE) * SWT_BASE_VALUE_SIZE)};
 	if (out.groups == NULL || out.values == NULL)
 	{
 		free(out.groups);
@@ -47,10 +47,10 @@ t_swt_map	ft_swiss_table_create(t_swt_hashfun hash,
 	size_t		i;
 	size_t		j;
 
-	out = (t_swt_map){.pair_count = 0, .nb_groups = SWT_BASE_SIZE,
+	out = (t_swt_map){.pair_count = 0, .nb_groups = SWT_BASE_GROUP_SIZE,
 		.hashfun = hash, .cmpfun = cmp,
-		.groups = malloc(sizeof(t_swt_group) * SWT_BASE_SIZE),
-		.values = malloc(sizeof(void*) * SWT_BASE_SIZE)};
+		.groups = malloc(sizeof(t_swt_group) * SWT_BASE_GROUP_SIZE),
+		.values = malloc(sizeof(SWT_KEY_TYPE) * SWT_BASE_VALUE_SIZE)};
 	if (out.groups == NULL || out.values == NULL)
 	{
 		free(out.groups);
@@ -60,7 +60,7 @@ t_swt_map	ft_swiss_table_create(t_swt_hashfun hash,
 		return (out);
 	}
 	i = out.nb_groups;
-	while (i-- && (j = SWT_BASE_SIZE))
+	while (i-- && (j = SWT_BASE_CONTROL_SIZE))
 		while (j--)
 			out.groups[i].control[j] = SWT_EMPTY;
 	return (out);

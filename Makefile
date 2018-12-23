@@ -1,6 +1,10 @@
 NAME := ft_swiss_table.a
 
+ARG_TEST +=
+
 OBJ_DIR := .obj
+
+TEST_OBJ := $(OBJ_DIR)/test.o
 
 _OBJS := ft_swiss_table_create.o  \
          ft_swiss_table_destroy.o \
@@ -14,11 +18,10 @@ _OBJS := ft_swiss_table_create.o  \
 
 OBJS := $(addprefix $(OBJ_DIR)/, $(_OBJS))
 
-TEST_OBJ := $(OBJ_DIR)/test.o
-
 CFLAGS += -Iinc
 
 ifneq ($(DEBUG), )
+PRE_TEST += valgrind
 CFLAGS += -g
 endif
 
@@ -45,7 +48,7 @@ endif
 all: $(NAME)
 
 test: test.bin
-	./test.bin $(TEST_ARG)
+	$(PRE_TEST) ./test.bin $(TEST_ARG)
 
 $(NAME): $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^

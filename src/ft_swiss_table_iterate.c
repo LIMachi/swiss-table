@@ -33,24 +33,23 @@ int	ft_swiss_table_iterate(t_swt_map *map,
 	int			i;
 	int			match;
 
-	while (*it < map->nb_groups << 4)
+	while (*it < map->nb_groups * SWT_BASE_CONTROL_SIZE)
 	{
-		g = map->groups[*it >> 4];
+		g = map->groups[*it / SWT_BASE_CONTROL_SIZE];
 		match = _mm_movemask_epi8(g.control);
-		i = *it & 0xF;
-		while (i < 0x10 && match & (1 << i))
+		i = *it % SWT_BASE_CONTROL_SIZE;
+		while (i < SWT_BASE_CONTROL_SIZE && match & (1 << i))
 			++i;
-		if (i != 0x10)
+		*it = *it - *it % SWT_BASE_CONTROL_SIZE + i;
+		if (i != SWT_BASE_CONTROL_SIZE)
 		{
-			*it = (*it & ~0xF) | i;
 			*key_retriever = g.key[i];
 			*value_retriever = map->values[*it];
 			++*it;
 			return (1);
 		}
-		*it = (*it & ~0xF) + 0x10;
 	}
-	return (*it == map->nb_groups << 4 ? 0 : -1);
+	return (*it == map->nb_groups * SWT_BASE_CONTROL_SIZE ? 0 : -1);
 }
 
 #else
@@ -63,23 +62,22 @@ int	ft_swiss_table_iterate(t_swt_map *map,
 	t_swt_group	g;
 	int			i;
 
-	while (*it < map->nb_groups << 4)
+	while (*it < map->nb_groups * SWT_BASE_CONTROL_SIZE)
 	{
-		g = map->groups[*it >> 4];
-		i = *it & 0xF;
-		while (i < 0x10 && g.control[i] & 1 << 7)
+		g = map->groups[*it / SWT_BASE_CONTROL_SIZE];
+		i = *it % SWT_BASE_CONTROL_SIZE;
+		while (i < SWT_BASE_CONTROL_SIZE && g.control[i] & 1 << 7)
 			++i;
-		if (i != 0x10)
+		*it = *it - *it % SWT_BASE_CONTROL_SIZE + i;
+		if (i != SWT_BASE_CONTROL_SIZE)
 		{
-			*it = (*it & ~0xF) | i;
 			*key_retriever = g.key[i];
 			*value_retriever = map->values[*it];
 			++*it;
 			return (1);
 		}
-		*it = (*it & ~0xF) + 0x10;
 	}
-	return (*it == map->nb_groups << 4 ? 0 : -1);
+	return (*it == map->nb_groups * SWT_BASE_CONTROL_SIZE ? 0 : -1);
 }
 
 #endif

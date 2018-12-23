@@ -28,6 +28,16 @@
 #  define SWT_VALUE_TYPE void*
 # endif
 
+/*
+** note: changing the following defines will produce undefined behavior
+*/
+
+# define SWT_BASE_CONTROL_SIZE (16)
+# define SWT_BASE_GROUP_SIZE (16)
+# define SWT_BASE_VALUE_SIZE (SWT_BASE_CONTROL_SIZE * SWT_BASE_GROUP_SIZE)
+# define SWT_LOAD_FACTOR (0.75)
+# define SWT_EXPAND_FACTOR (2)
+
 # ifdef __SSE2__
 #  include <emmintrin.h>
 #  include <immintrin.h>
@@ -41,19 +51,11 @@
 # else
 #  warning "Missing SSE2 processor instructions\nUsing slower functions instead"
 
-typedef char		t_swt_i128[16];
+typedef char		t_swt_i128[SWT_BASE_CONTROL_SIZE];
 
 #  define SWTI128 t_swt_i128
 
 # endif
-
-/*
-** note: changing the following defines will produce undefined behavior
-*/
-
-# define SWT_BASE_SIZE (16)
-# define SWT_LOAD_FACTOR (0.75)
-# define SWT_EXPAND_FACTOR (2)
 
 typedef enum		e_swt_control
 {
@@ -69,7 +71,7 @@ typedef enum		e_swt_control
 typedef struct		s_swt_group
 {
 	SWTI128			control;
-	SWT_KEY_TYPE	key[16];
+	SWT_KEY_TYPE	key[SWT_BASE_CONTROL_SIZE];
 }					t_swt_group;
 
 struct				s_swt_hash

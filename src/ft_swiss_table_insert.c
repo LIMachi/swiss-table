@@ -23,21 +23,21 @@ int					ft_swiss_table_insert(t_swt_map *map,
 	int			i;
 	int			match;
 
-	if (map->pair_count >= SWT_LOAD_FACTOR * map->nb_groups * 16)
+	if (map->pair_count >= SWT_LOAD_FACTOR * map->nb_groups * SWT_BASE_CONTROL_SIZE)
 		if (ft_swiss_table_expand(map, SWT_EXPAND_FACTOR))
 			return (-1);
-	hash.s = map->hashfun(key, map->nb_groups << 4);
+	hash.s = map->hashfun(key, map->nb_groups * SWT_BASE_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
 	while (1)
 	{
 		if ((match = _mm_movemask_epi8(_mm_cmpeq_epi8(_mm_set1_epi8(
-				(char)SWT_EMPTY), map->groups[gi].control))) && !(i = 0))
-			while (i < 16)
-				if (match & (1 << i++))
+				(char)SWT_EMPTY), map->groups[gi].control))) && (i = -1))
+			while (++i < SWT_BASE_CONTROL_SIZE)
+				if (match & (1 << i))
 				{
-					((char *)&map->groups[gi].control)[i - 1] = (char)hash.h.meta;
-					map->groups[gi].key[i - 1] = key;
-					map->values[gi * 16 + i - 1] = value;
+					((char *)&map->groups[gi].control)[i] = (char)hash.h.meta;
+					map->groups[gi].key[i] = key;
+					map->values[gi * SWT_BASE_CONTROL_SIZE + i] = value;
 					++map->pair_count;
 					return (0);
 				}
@@ -53,7 +53,7 @@ static inline int	i_get_match_mask(char byte, t_swt_i128 control)
 	int	out;
 
 	out = 0;
-	i = 16;
+	i = SWT_BASE_CONTROL_SIZE;
 	while (i--)
 		if (control[i] == byte)
 			out |= 1 << i;
@@ -69,21 +69,22 @@ int					ft_swiss_table_insert(t_swt_map *map,
 	int			i;
 	int			match;
 
-	if (map->pair_count >= SWT_LOAD_FACTOR * map->nb_groups * 16)
+	if (map->pair_count >= SWT_LOAD_FACTOR * map->nb_groups * SWT_BASE_CONTROL_SIZE)
 		if (ft_swiss_table_expand(map, SWT_EXPAND_FACTOR))
 			return (-1);
-	hash.s = map->hashfun(key, map->nb_groups << 4);
+	hash.s = map->hashfun(key, map->nb_groups * SWT_BASE_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
 	while (1)
 	{
 		if ((match = i_get_match_mask(SWT_EMPTY, map->groups[gi].control))
-				&& !(i = 0))
-			while (i < 16)
-				if (match & (1 << i++))
+				&& (i = -1))
+			while (++i < SWT_BASE_CONTROL_SIZE)
+				if (match & (1 << i))
 				{
-					((char *)&map->groups[gi].control)[i - 1] = (char)hash.h.meta;
-					map->groups[gi].key[i - 1] = key;
-					map->values[gi * 16 + i - 1] = value;
+					((char *)&map->groups[gi].control)[i] = (char)hash.h.meta;
+					map->groups[gi].key[i] = key;
+					map->values[gi * SWT_BASE_CONTROL_SIZE + i] = value;
+					printf("gi: %zu, i: %d, r: %zu\n", gi, i, gi * SWT_BASE_CONTROL_SIZE + i);
 					++map->pair_count;
 					return (0);
 				}
