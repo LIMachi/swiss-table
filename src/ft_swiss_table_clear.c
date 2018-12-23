@@ -13,34 +13,40 @@
 #include <ft_swiss_table.h>
 
 /*
-** iterate over the map and fill all controls with FHM_EMPTY and set
+** iterate over the map and fill all controls with SWT_EMPTY and set
 ** map->pair_count to 0, effectively recycling the table
+** return the available size
 */
+
+#ifdef __SSE2__
 
 int	ft_swiss_table_clear(t_swt_map *map)
 {
-	(void)map;
-	/*
-	size_t		i;
-	int			mmatch;
-	__m128i		control;
-	__m128i		match;
+	size_t	gi;
 
-	i = -1;
-	while (++i < map->nb_groups)
-	{
-		control = map->groups[i].control;
-		match = _mm_cmpeq_epi8(_mm_set1_epi8((char)FHM_DELETED), control);
-		control &= ~match;
-		control |= match & _mm_set1_epi8((char)FHM_EMPTY);
-		map->groups[i].control = control;
-		mmatch = _mm_movemask_epi8(match);
-		while (mmatch)
-		{
-			if (mmatch & 1)
-				--map->pair_count;
-			mmatch >>= 1;
-		}
-	}*/
-	return (0);
+	gi = map->nb_groups;
+	while (gi--)
+		map->groups[gi].control = _mm_set1_epi8((char)SWT_EMPTY);
+	map->nb_pairs = 0;
+	return (map->nb_groups * SWT_BASE_CONTROL_SIZE);
 }
+
+#else
+
+int	ft_swiss_table_clear(t_swt_map *map)
+{
+	size_t	gi;
+	size_t	i;
+
+	gi = map->nb_groups;
+	while (gi--)
+	{
+		i = SWT_BASE_CONTROL_SIZE;
+		while (i--)
+			map->groups[gi].control[i] = SWT_EMPTY;
+	}
+	map->nb_pairs = 0;
+	return (map->nb_groups * SWT_BASE_CONTROL_SIZE);
+}
+
+#endif
