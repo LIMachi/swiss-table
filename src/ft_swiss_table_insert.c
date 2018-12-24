@@ -84,7 +84,6 @@ int					ft_swiss_table_insert(t_swt_map *map,
 					((char *)&map->groups[gi].control)[i] = (char)hash.h.meta;
 					map->groups[gi].key[i] = key;
 					map->values[gi * SWT_BASE_CONTROL_SIZE + i] = value;
-					printf("gi: %zu, i: %d, r: %zu\n", gi, i, gi * SWT_BASE_CONTROL_SIZE + i);
 					++map->pair_count;
 					return (0);
 				}

@@ -49,7 +49,8 @@
 #  define SWTI128EMPTY _mm_cvtsi32_si128(SWT_EMPTY)
 
 # else
-#  warning "Missing SSE2 processor instructions\nUsing slower functions instead"
+#  pragma message "Missing SSE2 processor instructions"
+#  pragma message "Using slower functions instead"
 
 typedef char		t_swt_i128[SWT_BASE_CONTROL_SIZE];
 
