@@ -34,10 +34,10 @@ SWT_VALUE_TYPE		ft_swiss_table_delete(t_swt_map *map, SWT_KEY_TYPE key)
 				&& __builtin_expect(!map->cmpfun(g.key[i], key), 1))
 			{
 				match = !_mm_movemask_epi8(_mm_cmpeq_epi8(
-					_mm_set1_epi8((char)FHM_EMPTY), g.control));
-				map->groups[gi].control &= ~(I1280XFF << (i << 8));
+					_mm_set1_epi8((char)SWT_EMPTY), g.control));
+				map->groups[gi].control &= ~(SWTI1280XFF << (i << 8));
 				map->groups[gi].control |= (__builtin_expect(match, 0) ?
-						I128DELETED : I128EMPTY) << (i << 8);
+					SWTI128DELETED : SWTI128EMPTY) << (i << 8);
 				if (__builtin_expect(!match, 1))
 					--map->pair_count;
 				return (map->values[gi * SWT_BASE_CONTROL_SIZE + i]);

@@ -34,7 +34,6 @@ int	main(void)
 			(void**)&data) == 1)
 		printf("%zu '%s': '%s'\n", it, key, data);
 	ft_swiss_table_delete(&map, "cool");
-	ft_swiss_table_clear(&map);
 	printf("pair_count: %zu\n", map.pair_count);
 	it = 0;
 	while (ft_swiss_table_iterate(&map, &it, (void**)&key,
