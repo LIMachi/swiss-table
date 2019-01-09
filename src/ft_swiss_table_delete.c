@@ -46,6 +46,7 @@ SWT_VALUE_TYPE		ft_swiss_table_delete(t_swt_map *map, SWT_KEY_TYPE key)
 			return (NULL);
 		gi = (gi + 1) % map->nb_groups;
 	}
+	return (NULL);
 }
 
 #else
@@ -92,6 +93,7 @@ SWT_VALUE_TYPE		ft_swiss_table_delete(t_swt_map *map, SWT_KEY_TYPE key)
 			return (NULL);
 		gi = (gi + 1) % map->nb_groups;
 	}
+	return (NULL);
 }
 
 #endif
