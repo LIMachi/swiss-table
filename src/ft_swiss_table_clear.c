@@ -28,7 +28,7 @@ int	ft_swiss_table_clear(t_swt_map *map)
 	while (gi--)
 		map->groups[gi].control = _mm_set1_epi8((char)SWT_EMPTY);
 	map->pair_count = 0;
-	return (map->nb_groups * SWT_BASE_CONTROL_SIZE);
+	return (map->nb_groups * SWT_CONTROL_SIZE);
 }
 
 #else
@@ -41,12 +41,12 @@ int	ft_swiss_table_clear(t_swt_map *map)
 	gi = map->nb_groups;
 	while (gi--)
 	{
-		i = SWT_BASE_CONTROL_SIZE;
+		i = SWT_CONTROL_SIZE;
 		while (i--)
 			map->groups[gi].control[i] = SWT_EMPTY;
 	}
 	map->pair_count = 0;
-	return (map->nb_groups * SWT_BASE_CONTROL_SIZE);
+	return (map->nb_groups * SWT_CONTROL_SIZE);
 }
 
 #endif

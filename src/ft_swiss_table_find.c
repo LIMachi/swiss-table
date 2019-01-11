@@ -33,7 +33,7 @@ SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
 	t_swt_group		g;
 	int				match;
 
-	hash.s = map->hashfun(key, map->nb_groups * SWT_BASE_CONTROL_SIZE);
+	hash.s = map->hashfun(key, map->nb_groups * SWT_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
 	while (1)
 	{
@@ -41,10 +41,10 @@ SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
 		match = _mm_movemask_epi8(_mm_cmpeq_epi8(_mm_set1_epi8(
 			hash.h.meta), g.control));
 		i = -1;
-		while (++i < SWT_BASE_CONTROL_SIZE)
+		while (++i < SWT_CONTROL_SIZE)
 			if (match & (1 << i)
 					&& __builtin_expect(!map->cmpfun(g.key[i], key), 1))
-				return (map->values[gi * SWT_BASE_CONTROL_SIZE + i]);
+				return (map->values[gi * SWT_CONTROL_SIZE + i]);
 		if (__builtin_expect(match != 0b1111111111111111, 1))
 			return (NULL);
 		gi = (gi + 1) % map->nb_groups;
@@ -59,7 +59,7 @@ static inline int	i_get_match_mask(char byte, t_swt_i128 control)
 	int	out;
 
 	out = 0;
-	i = SWT_BASE_CONTROL_SIZE;
+	i = SWT_CONTROL_SIZE;
 	while (i--)
 		if (control[i] == byte)
 			out |= 1 << i;
@@ -74,20 +74,17 @@ SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
 	t_swt_group		g;
 	int				match;
 
-	hash.s = map->hashfun(key, map->nb_groups * SWT_BASE_CONTROL_SIZE);
+	hash.s = map->hashfun(key, map->nb_groups * SWT_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
 	while (1)
 	{
 		g = map->groups[gi];
 		match = i_get_match_mask(hash.h.meta, g.control);
 		i = -1;
-		while (++i < SWT_BASE_CONTROL_SIZE)
+		while (++i < SWT_CONTROL_SIZE)
 			if (match & (1 << i)
 					&& __builtin_expect(!map->cmpfun(g.key[i], key), 1))
-			{
-				printf("gi: %zu, i: %d, r: %zu\n", gi, i, gi * SWT_BASE_CONTROL_SIZE + i);
-				return (map->values[gi * SWT_BASE_CONTROL_SIZE + i]);
-			}
+				return (map->values[gi * SWT_CONTROL_SIZE + i]);
 		if (__builtin_expect(match != 0b1111111111111111, 1))
 			return (NULL);
 		gi = (gi + 1) % map->nb_groups;

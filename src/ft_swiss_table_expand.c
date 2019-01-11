@@ -12,15 +12,9 @@
 
 #include <ft_swiss_table.h>
 
-#ifdef __SSE2__
-
-int		ft_swiss_table_expand(t_swt_map *map, int factor)
+static inline t_swt_map	i_tmp_map(t_swt_map *map, int factor)
 {
 	t_swt_map		tmp;
-	size_t			i;
-	int				match;
-	int				j;
-	t_swt_group		g;
 
 	tmp = (t_swt_map){.pair_count = 0, .nb_groups = map->nb_groups * factor,
 		.hashfun = map->hashfun, .cmpfun = map->cmpfun,
@@ -29,20 +23,36 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 	if (tmp.groups == NULL || tmp.values == NULL)
 	{
 		free(tmp.groups);
+		tmp.groups = NULL;
 		free(tmp.values);
-		return (-1);
+		tmp.values = NULL;
 	}
+	return (tmp);
+}
+
+#ifdef __SSE2__
+
+int						ft_swiss_table_expand(t_swt_map *map, int factor)
+{
+	t_swt_map		tmp;
+	size_t			i;
+	int				match;
+	int				j;
+	t_swt_group		g;
+
+	if ((tmp = i_tmp_map(map, factor)).groups == NULL)
+		return (-1);
 	i = -1;
 	while (++i < map->nb_groups)
 	{
 		g = map->groups[i];
 		match = _mm_movemask_epi8(g.control);
 		j = -1;
-		while (++j < SWT_BASE_CONTROL_SIZE)
+		while (++j < SWT_CONTROL_SIZE)
 			if (!(match & (1 << i)))
 				if (__builtin_expect(
 					ft_swiss_table_insert(&tmp, g.key[j],
-						map->values[i * SWT_BASE_CONTROL_SIZE + j]), 0))
+						map->values[i * SWT_CONTROL_SIZE + j]), 0))
 					return (-1);
 	}
 	ft_swiss_table_destroy(map);
@@ -52,33 +62,25 @@ int		ft_swiss_table_expand(t_swt_map *map, int factor)
 
 #else
 
-int		ft_swiss_table_expand(t_swt_map *map, int factor)
+int						ft_swiss_table_expand(t_swt_map *map, int factor)
 {
 	t_swt_map		tmp;
 	size_t			i;
 	int				j;
 	t_swt_group		g;
 
-	tmp = (t_swt_map){.pair_count = 0, .nb_groups = map->nb_groups * factor,
-		.hashfun = map->hashfun, .cmpfun = map->cmpfun,
-		.groups = malloc(sizeof(t_swt_group) * map->nb_groups * factor),
-		.values = malloc(sizeof(SWT_VALUE_TYPE) * map->nb_groups * factor)};
-	if (tmp.groups == NULL || tmp.values == NULL)
-	{
-		free(tmp.groups);
-		free(tmp.values);
+	if ((tmp = i_tmp_map(map, factor)).groups == NULL)
 		return (-1);
-	}
 	i = -1;
 	while (++i < map->nb_groups)
 	{
 		g = map->groups[i];
 		j = -1;
-		while (++j < SWT_BASE_CONTROL_SIZE)
+		while (++j < SWT_CONTROL_SIZE)
 			if (!(g.control[j] & (1 << 7)))
 				if (__builtin_expect(
 					ft_swiss_table_insert(&tmp, g.key[j],
-						map->values[i * SWT_BASE_CONTROL_SIZE + j]), 0))
+						map->values[i * SWT_CONTROL_SIZE + j]), 0))
 					return (-1);
 	}
 	ft_swiss_table_destroy(map);
