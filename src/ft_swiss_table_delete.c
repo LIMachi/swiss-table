@@ -31,7 +31,8 @@ static inline SWT_VALUE_TYPE	i_ft_swiss_table_delete(t_swt_map *map,
 }
 
 SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
-													SWT_KEY_TYPE key)
+													SWT_KEY_TYPE key,
+												SWT_VALUE_TYPE no_match_return)
 {
 	t_swt_hash		hash;
 	size_t			gi;
@@ -41,8 +42,9 @@ SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
 
 	hash.s = map->hashfun(key, map->nb_groups * SWT_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
-	while ((i = -1))
+	while (1)
 	{
+		i = -1;
 		g = map->groups[gi];
 		match = _mm_movemask_epi8(_mm_cmpeq_epi8(_mm_set1_epi8(
 				hash.h.meta), g.control));
@@ -53,10 +55,9 @@ SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
 						_mm_cmpeq_epi8(_mm_set1_epi8((char)SWT_EMPTY),
 						g.control)), i, gi));
 				if (__builtin_expect(match != 0b1111111111111111, 1))
-			return (NULL);
+			return (no_match_return);
 		gi = (gi + 1) % map->nb_groups;
 	}
-	return (NULL);
 }
 
 #else
@@ -91,7 +92,8 @@ static inline SWT_VALUE_TYPE	i_ft_swiss_table_delete(t_swt_map *map,
 }
 
 SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
-													SWT_KEY_TYPE key)
+													SWT_KEY_TYPE key,
+												SWT_VALUE_TYPE no_match_return)
 {
 	t_swt_hash		hash;
 	size_t			gi;
@@ -101,8 +103,9 @@ SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
 
 	hash.s = map->hashfun(key, map->nb_groups * SWT_CONTROL_SIZE);
 	gi = hash.h.position % map->nb_groups;
-	while ((i = -1))
+	while (1)
 	{
+		i = -1;
 		g = map->groups[gi];
 		match = i_get_match_mask(hash.h.meta, g.control);
 		while (++i < SWT_CONTROL_SIZE)
@@ -111,10 +114,9 @@ SWT_VALUE_TYPE					ft_swiss_table_delete(t_swt_map *map,
 				return (i_ft_swiss_table_delete(map,
 					!i_get_match_mask(SWT_EMPTY, g.control), i, gi));
 				if (__builtin_expect(match != 0b1111111111111111, 1))
-			return (NULL);
+			return (no_match_return);
 		gi = (gi + 1) % map->nb_groups;
 	}
-	return (NULL);
 }
 
 #endif

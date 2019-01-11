@@ -110,9 +110,11 @@ int						ft_swiss_table_insert(t_swt_map *map,
 
 int						ft_swiss_table_expand(t_swt_map *map, int factor);
 
-SWT_VALUE_TYPE			ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key);
+SWT_VALUE_TYPE			ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key,
+	SWT_VALUE_TYPE no_match_return);
 
-SWT_VALUE_TYPE			ft_swiss_table_delete(t_swt_map *map, SWT_KEY_TYPE key);
+SWT_VALUE_TYPE			ft_swiss_table_delete(t_swt_map *map, SWT_KEY_TYPE key,
+	SWT_VALUE_TYPE no_match_return);
 
 void					ft_swiss_table_destroy(t_swt_map *map);
 

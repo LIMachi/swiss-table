@@ -25,7 +25,8 @@
 
 #ifdef __SSE2__
 
-SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
+SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key,
+	SWT_VALUE_TYPE no_match_return)
 {
 	t_swt_hash		hash;
 	size_t			gi;
@@ -46,7 +47,7 @@ SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
 					&& __builtin_expect(!map->cmpfun(g.key[i], key), 1))
 				return (map->values[gi * SWT_CONTROL_SIZE + i]);
 		if (__builtin_expect(match != 0b1111111111111111, 1))
-			return (NULL);
+			return (no_match_return);
 		gi = (gi + 1) % map->nb_groups;
 	}
 }
@@ -66,7 +67,8 @@ static inline int	i_get_match_mask(char byte, t_swt_i128 control)
 	return (out);
 }
 
-SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
+SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key,
+	SWT_VALUE_TYPE no_match_return)
 {
 	t_swt_hash		hash;
 	size_t			gi;
@@ -86,7 +88,7 @@ SWT_VALUE_TYPE		ft_swiss_table_find(t_swt_map *map, SWT_KEY_TYPE key)
 					&& __builtin_expect(!map->cmpfun(g.key[i], key), 1))
 				return (map->values[gi * SWT_CONTROL_SIZE + i]);
 		if (__builtin_expect(match != 0b1111111111111111, 1))
-			return (NULL);
+			return (no_match_return);
 		gi = (gi + 1) % map->nb_groups;
 	}
 }

@@ -26,14 +26,14 @@ int	main(void)
 	ft_swiss_table_insert(&map, "test", "1");
 	ft_swiss_table_insert(&map, "sak", "2");
 	ft_swiss_table_insert(&map, "cool", "3");
-	data = ft_swiss_table_find(&map, "sak");
+	data = ft_swiss_table_find(&map, "sak", NULL);
 	printf("data: '%s'\n", data);
 	printf("iterate:\n");
 	it = 0;
 	while (ft_swiss_table_iterate(&map, &it, (void**)&key,
 			(void**)&data) == 1)
 		printf("%zu '%s': '%s'\n", it, key, data);
-	ft_swiss_table_delete(&map, "cool");
+	ft_swiss_table_delete(&map, "cool", NULL);
 	printf("pair_count: %zu\n", map.pair_count);
 	it = 0;
 	while (ft_swiss_table_iterate(&map, &it, (void**)&key,
