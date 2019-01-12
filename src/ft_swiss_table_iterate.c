@@ -43,8 +43,10 @@ int	ft_swiss_table_iterate(t_swt_map *map,
 		*it = *it - *it % SWT_CONTROL_SIZE + i;
 		if (i != SWT_CONTROL_SIZE)
 		{
-			*key_retriever = g.key[i];
-			*value_retriever = map->values[*it];
+			if (key_retriever != NULL)
+				*key_retriever = g.key[i];
+			if (value_retriever != NULL)
+				*value_retriever = map->values[*it];
 			++*it;
 			return (1);
 		}
@@ -71,8 +73,10 @@ int	ft_swiss_table_iterate(t_swt_map *map,
 		*it = *it - *it % SWT_CONTROL_SIZE + i;
 		if (i != SWT_CONTROL_SIZE)
 		{
-			*key_retriever = g.key[i];
-			*value_retriever = map->values[*it];
+			if (key_retriever != NULL)
+				*key_retriever = g.key[i];
+			if (value_retriever != NULL)
+				*value_retriever = map->values[*it];
 			++*it;
 			return (1);
 		}
