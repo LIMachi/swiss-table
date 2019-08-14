@@ -9,3 +9,4 @@
 *.a
 *.bin
 .srcs
+CMakeLists.txt
